@@ -6,7 +6,7 @@ Personal configuration for bash, zsh, tmux, and yazi, built around Arch Linux, a
 
 | File / dir      | Links to               | Covers |
 |------------------|-------------------------|--------|
-| `bashrc`         | `~/.bashrc`             | aliases, prompt, suckless build shortcuts |
+| `bashrc`         | `~/.bashrc`             | aliases, prompt |
 | `bash_profile`   | `~/.bash_profile`       | sources `.bashrc`, starts X |
 | `zshrc`          | `~/.zshrc`              | completion, prompt (vcs_info), plugins, SSH agent, aliases |
 | `zprofile`       | `~/.zprofile`           | XDG paths, `$EDITOR`/`$TERMINAL`, starts X on tty1 |
@@ -33,8 +33,9 @@ For specific features:
 - `openssh`: `zshrc` starts an `ssh-agent` on login and loads `~/.ssh/id_ed25519` if present
 - `zsh-autosuggestions` and `zsh-syntax-highlighting`: `zshrc` sources them from `/usr/share/zsh/plugins/`, the path Arch's packages use
 - `st` (suckless terminal): set as `$TERMINAL` in `zprofile`, not required, just the default
+- `xdg-user-dirs`: used by the `cuis` alias to find your desktop folder regardless of locale, falls back to a plain directory check if it's missing
 
-Assumed but not part of this repo: a `~/dev/suckless-btw/` checkout with `dwm`, `dwmblocks`, `st`, `slstatus`, `slock`, and `rofi` configs. Both shells define build/edit aliases for those (`cdwm`, `mdwm`, `csl`, `mst`, etc.) that will fail if the directory doesn't exist. They're harmless until you actually run them.
+A few aliases still point outside this repo, to things that live only on the machine they were written for: `cad` and `shortcuts` call scripts under `~/dev/suckless-btw/scripts/`, and `cuis` expects a Smalltalk (Cuis) image under `linux64/` inside your desktop folder. `cuis` resolves that folder with `xdg-user-dir DESKTOP` when it's available, so it works regardless of locale (`Desktop`, `Escritorio`, etc.); without `xdg-user-dirs` installed it falls back to checking the common casings directly. None of that is required for bash, zsh, tmux, or yazi to work; those aliases just won't do anything until the paths exist.
 
 ## Install
 

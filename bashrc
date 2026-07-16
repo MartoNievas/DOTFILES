@@ -9,33 +9,12 @@ alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 alias neofetch='fastfetch'
 alias vim="nvim"
-
-#Config dwm
-alias cdwm="vim ~/dev/suckless-btw/dwm/config.def.h"
-alias mdwm="cd ~/dev/suckless-btw/dwm/; sudo rm config.h && sudo make clean install; cd ..; cd .."
-alias ddwm="cd ~/dev/suckless-btw/dwm/"
-
-#Dwm blocks
-alias cdwmb="vim ~/dev/suckless-btw/dwm/dwmblocks/blocks.def.h"
-alias mdwmb="cd ~/dev/suckless-btw/dwm/dwmblocks/; sudo rm blocks.h && sudo make clean install; cd ~/"
-alias ddwmb="cd ~/dev/suckless-btw/dwm/dwmblocks/"
-
-#Config st
-alias cst="vim ~/dev/suckless-btw/st/config.def.h"
-alias mst="cd ~/dev/suckless-btw/st/; sudo rm config.h && sudo make clean install; cd ..; cd .."
-alias dst="cd ~/dev/suckless-btw/st/"
-PS1='[\u@\h \W]\$ '
-
-#Config slstatus
-alias csl="vim ~/dev/suckless-btw/slstatus/config.def.h"
-alias msl="cd ~/dev/suckless-btw/slstatus/; sudo rm config.h && sudo make clean install; cd ..; cd .."
-alias dsl="cd ~/dev/suckless-btw/slstatus/"
+alias lss="ls | sort"
 
 #Config rofi
-
-alias crofi="sudo vim ~/.config/rofi/config.rasi"
-alias trofi="sudo vim ~/.config/rofi/theme.rasi"
-alias colrofi="sudo vim ~/.config/rofi/colors.rasi"
+alias crofi="vim ~/.config/rofi/config.rasi"
+alias trofi="vim ~/.config/rofi/theme.rasi"
+alias colrofi="vim ~/.config/rofi/colors.rasi"
 
 # Bash config
 # Definición de Colores (ANSI)
@@ -54,19 +33,33 @@ parse_git_branch() {
 export DEBUGINFOD_URLS="https://debuginfod.archlinux.org"
 
 # Prompt estilo "Minimal-Warm"
-export PS1="${FG_ORANGE}\u${FG_WHITE} ${FG_WHITE}\h ${FG_BLUE}\w${FG_PINK}\$(parse_git_branch)${FG_WHITE} ❯ ${C_RESET}"
+export PS1="${FG_ORANGE}\u${FG_WHITE} ${FG_WHITE}\h ${FG_BLUE}\w${FG_PINK}\$(parse_git_branch)${FG_WHITE} ❯ ${C_RESET}"
 
-alias clean='echo "--- Limpiando caché de paquetes ---" && sudo paccache -rk 2 && echo "--- Eliminando huérfanos ---" && sudo pacman -Rs $(pacman -Qdtq) || echo "No hay huérfanos que eliminar" && echo "--- Limpiando logs antiguos ---" && sudo journalctl --vacuum-time=2weeks && echo "--- Limpiando caché de usuario ---" && rm -rf ~/.cache/* && echo "Sistema limpio!"'
+alias clean='echo "--- Limpiando caché de paquetes ---" && sudo paccache -rk 2 && echo "--- Eliminando huérfanos ---" && (sudo pacman -Rs $(pacman -Qdtq) || echo "No hay huérfanos que eliminar") && echo "--- Limpiando logs antiguos ---" && sudo journalctl --vacuum-time=2weeks && echo "--- Limpiando caché de usuario ---" && rm -rf ~/.cache/* && echo "Sistema limpio!"'
 
-export DEBUGINFOD_URLS="https://debuginfod.archlinux.org"
+up() {
+  local levels=${1:-1}
+  local dir=""
 
-alias lss="ls | sort"
+  for ((i=0; i<levels; i++)); do
+      dir="../$dir"
+  done
 
-alias up=". /usr/local/bin/up.sh"
-alias dot="cd ~/dev/suckless-btw/dotfiles/"
+  cd "$dir"
+}
+
+alias dot="cd ~/dotfiles"
 
 #Smalltalk
-alias cuis="cd ~/Escritorio/linux64/ && (./run.sh &) && exit"
-. "$HOME/.cargo/env"
+if command -v xdg-user-dir >/dev/null 2>&1; then
+  _desktop_dir="$(xdg-user-dir DESKTOP)"
+else
+  _desktop_dir="$HOME/Desktop"
+  for _d in "$HOME/Desktop" "$HOME/desktop" "$HOME/Escritorio" "$HOME/escritorio"; do
+    [[ -d "$_d" ]] && { _desktop_dir="$_d"; break; }
+  done
+fi
+alias cuis="cd \"$_desktop_dir/linux64\" && (./run.sh &) && exit"
 
-. "$HOME/.local/share/../bin/env"
+[[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
+[[ -f "$HOME/.local/bin/env" ]] && . "$HOME/.local/bin/env"

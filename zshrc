@@ -47,8 +47,8 @@ git-update() {
   local commit=$1
 
   if [[ -z "$commit" ]]; then
-    echo "Empty commit message, please write an informative message" 
-    return 1 
+    echo "Empty commit message, please write an informative message"
+    return 1
   fi
 
   git add . && git commit -m "$commit" && git push
@@ -59,16 +59,19 @@ alias grep='grep --color=auto'
 alias neofetch='fastfetch'
 alias vim="nvim"
 alias lss="ls | sort"
-alias dot="cd ~/dev/suckless-btw/dotfiles/"
-alias cad="./$HOME/dev/suckless-btw/scripts/audio-device-selector-handler.sh" 
+alias dot="cd ~/dotfiles"
+alias cad="$HOME/dev/suckless-btw/scripts/audio-device-selector-handler.sh"
 
-if [[ "$(cat /etc/hostname)" == "archlinux-desktop" ]]; then
-  _cuis_path="$HOME/escritorio/linux64/"
+if command -v xdg-user-dir >/dev/null 2>&1; then
+  _desktop_dir="$(xdg-user-dir DESKTOP)"
 else
-  _cuis_path="$HOME/Escritorio/linux64"
+  _desktop_dir="$HOME/Desktop"
+  for _d in "$HOME/Desktop" "$HOME/desktop" "$HOME/Escritorio" "$HOME/escritorio"; do
+    [[ -d "$_d" ]] && { _desktop_dir="$_d"; break; }
+  done
 fi
 
-alias cuis="cd $_cuis_path && (./run.sh &) && exit"
+alias cuis="cd \"$_desktop_dir/linux64\" && (./run.sh &) && exit"
 
 # --- PREFERENCIAS DE GIT ---
 
@@ -76,41 +79,13 @@ alias git-up="git pull --recurse-submodules && git submodule update --remote --r
 
 alias shortcuts="~/dev/suckless-btw/scripts/shortcuts.sh"
 
-# --- DWM CONFIG ---
-alias cdwm="vim ~/dev/suckless-btw/dwm/config.def.h"
-alias mdwm="cd ~/dev/suckless-btw/dwm/ && sudo rm -f config.h && sudo make clean install && cd -"
-alias ddwm="cd ~/dev/suckless-btw/dwm/"
-
-# --- DWM BLOCKS ---
-alias cdwmb="vim ~/dev/suckless-btw/dwm/dwmblocks/blocks.def.h"
-alias mdwmb="cd ~/dev/suckless-btw/dwm/dwmblocks/ && sudo rm -f blocks.h && sudo make clean install && cd -"
-alias ddwmb="cd ~/dev/suckless-btw/dwm/dwmblocks/"
-
-# --- ST CONFIG ---
-alias cst="vim ~/dev/suckless-btw/st/config.def.h"
-alias mst="cd ~/dev/suckless-btw/st/ && sudo rm -f config.h && sudo make clean install && cd -"
-alias dst="cd ~/dev/suckless-btw/st/"
-
-# --- SLSTATUS CONFIG ---
-alias csl="vim ~/dev/suckless-btw/slstatus/config.def.h"
-alias msl="cd ~/dev/suckless-btw/slstatus/ && sudo rm -f config.h && sudo make clean install && cd -"
-alias dsl="cd ~/dev/suckless-btw/slstatus/"
-
-# --- SLOCK CONFIG ---
-alias csk="vim ~/dev/suckless-btw/slock/config.def.h"
-alias msk="cd ~/dev/suckless-btw/slock/ && sudo rm -f config.h && sudo make clean install && cd -"
-alias dsk="cd ~/dev/suckless-btw/slock/"
-
 # --- ROFI CONFIG ---
-alias crofi="sudo vim ~/.config/rofi/config.rasi"
-alias trofi="sudo vim ~/.config/rofi/theme.rasi"
-alias colrofi="sudo vim ~/.config/rofi/colors.rasi"
+alias crofi="vim ~/.config/rofi/config.rasi"
+alias trofi="vim ~/.config/rofi/theme.rasi"
+alias colrofi="vim ~/.config/rofi/colors.rasi"
 
 # --- MANTENIMIENTO ---
 alias clean='echo "--- Limpiando caché de paquetes ---" && sudo paccache -rk 2 && echo "--- Eliminando huérfanos ---" && (sudo pacman -Rs $(pacman -Qdtq) || echo "No hay huérfanos") && echo "--- Limpiando logs ---" && sudo journalctl --vacuum-time=2weeks && echo "--- Limpiando cache usuario ---" && rm -rf ~/.cache/* && echo "Sistema limpio!"'
-
-# --- COMPILAR TODO EL SISTEMA ---
-alias compile_all="mst && msl && mdwm"
 
 # --- EXPORTS ---
 export DEBUGINFOD_URLS="https://debuginfod.archlinux.org"
@@ -120,7 +95,7 @@ autoload -Uz vcs_info
 precmd() { vcs_info }
 zstyle ':vcs_info:git:*' formats '%F{#ff79c6}(%b)%f '
 setopt PROMPT_SUBST
-PROMPT='%F{208}%n%F{15} %F{15}%m %F{74}%~ %F{205}${vcs_info_msg_0_}%F{15}❯ %f'
+PROMPT='%F{208}%n%F{15} %F{15}%m %F{74}%~ %F{205}${vcs_info_msg_0_}%F{15}❯ %f'
 
 bindkey "^?" backward-delete-char
 bindkey "^H" backward-delete-char
@@ -146,4 +121,4 @@ if ! ssh-add -l > /dev/null 2>&1; then
     ssh-add ~/.ssh/id_ed25519
 fi
 
-. "$HOME/.local/share/../bin/env"
+[[ -f "$HOME/.local/bin/env" ]] && . "$HOME/.local/bin/env"
