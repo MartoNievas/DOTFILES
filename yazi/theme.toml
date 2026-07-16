@@ -1,0 +1,16 @@
+[flavor]
+use = "gruvbox-dark"
+
+[icon]
+rules = []
+
+[mgr]
+ratio = [1, 2, 5]
+
+[preview]
+image_protocol = "chafa"
+
+[filetype]
+rules = [
+{ name = "*/", fg = "#fe8019" },
+]
