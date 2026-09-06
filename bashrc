@@ -63,3 +63,5 @@ alias cuis="cd \"$_desktop_dir/linux64\" && (./run.sh &) && exit"
 
 [[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
 [[ -f "$HOME/.local/bin/env" ]] && . "$HOME/.local/bin/env"
+
+. "$HOME/.local/share/../bin/env"

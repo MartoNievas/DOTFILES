@@ -1,5 +1,4 @@
 # --- OPTION CONFIG (Suckless Style) ---
-# Si no es interactivo, salir
 [[ $- != *i* ]] && return
 
 # Historial
@@ -10,8 +9,15 @@ setopt APPEND_HISTORY
 setopt SHARE_HISTORY
 setopt INC_APPEND_HISTORY
 
-# --- AUTOCOMPLETADO ---
-autoload -Uz compinit && compinit
+# --- AUTOCOMPLETADO OPTIMIZADO ---
+autoload -Uz compinit
+# Regenera zcompdump si tiene más de 24 hs; si no, carga rápido con -C
+if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
+  compinit
+else
+  compinit -C
+fi
+
 zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Z_a-z}'
 
@@ -35,23 +41,27 @@ zstyle ':completion:*' group-name ''
 up() {
   local levels=${1:-1}
   local dir=""
-
   for ((i=0; i<levels; i++)); do
       dir="../$dir"
   done
-
   cd "$dir"
 }
 
 git-update() {
-  local commit=$1
-
+  local commit="$*"
   if [[ -z "$commit" ]]; then
     echo "Empty commit message, please write an informative message"
     return 1
   fi
-
   git add . && git commit -m "$commit" && git push
+}
+
+mget() {
+  if [ -z "$MOODLE_SESSION" ]; then
+    echo "Error: Primero define tu cookie con: export MOODLE_SESSION=\"tu_cookie\""
+    return 1
+  fi
+  wget --header="Cookie: MoodleSession=$MOODLE_SESSION" --content-disposition "$@"
 }
 
 alias ls='ls --color=auto'
@@ -71,12 +81,10 @@ else
   done
 fi
 
-alias cuis="cd \"$_desktop_dir/linux64\" && (./run.sh &) && exit"
+alias cuis="cd \"$_desktop_dir/cuis\" && nohup ./RunCuisUniversityOnLinux.sh >/dev/null 2>&1 & disown && exit"
 
 # --- PREFERENCIAS DE GIT ---
-
 alias git-up="git pull --recurse-submodules && git submodule update --remote --recursive --rebase"
-
 alias shortcuts="~/dev/suckless-btw/scripts/shortcuts.sh"
 
 # --- ROFI CONFIG ---
@@ -85,10 +93,11 @@ alias trofi="vim ~/.config/rofi/theme.rasi"
 alias colrofi="vim ~/.config/rofi/colors.rasi"
 
 # --- MANTENIMIENTO ---
-alias clean='echo "--- Limpiando caché de paquetes ---" && sudo paccache -rk 2 && echo "--- Eliminando huérfanos ---" && (sudo pacman -Rs $(pacman -Qdtq) || echo "No hay huérfanos") && echo "--- Limpiando logs ---" && sudo journalctl --vacuum-time=2weeks && echo "--- Limpiando cache usuario ---" && rm -rf ~/.cache/* && echo "Sistema limpio!"'
+alias clean='echo "--- Limpiando caché de paquetes ---" && sudo paccache -rk 2 && echo "--- Eliminando huérfanos ---" && (sudo pacman -Rs $(pacman -Qdtq) || echo "No hay huérfanos") && echo "--- Limpiando logs ---" && sudo journalctl --vacuum-time=2weeks && echo "Sistema limpio!"'
 
 # --- EXPORTS ---
 export DEBUGINFOD_URLS="https://debuginfod.archlinux.org"
+export PATH="$HOME/.npm-global/bin:$PATH"
 
 # --- PROMPT (Tokyo Night) ---
 autoload -Uz vcs_info
@@ -97,28 +106,33 @@ zstyle ':vcs_info:git:*' formats '%F{#ff79c6}(%b)%f '
 setopt PROMPT_SUBST
 PROMPT='%F{208}%n%F{15} %F{15}%m %F{74}%~ %F{205}${vcs_info_msg_0_}%F{15}❯ %f'
 
+# --- KEYBINDINGS (Modo Emacs) ---
+bindkey -e
 bindkey "^?" backward-delete-char
 bindkey "^H" backward-delete-char
-bindkey -e
 
-# --- PLUGINS ---
+# Ctrl+x, Ctrl+e para editar comando actual en Neovim
+autoload -Uz edit-command-line
+zle -N edit-command-line
+bindkey '^X^E' edit-command-line
+
+# --- PLUGINS (Arch Linux repo paths) ---
 [[ -f /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]] && source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 [[ -f /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]] && source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-export PATH="$HOME/.npm-global/bin:$PATH"
 
 # --- GESTION DE CLAVE SSH ---
-
-# Archivo donde guardaremos la info del agente
 export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
 
-# Si el socket no existe, iniciamos el agente
 if [ ! -S "$SSH_AUTH_SOCK" ]; then
     ssh-agent -a "$SSH_AUTH_SOCK" > /dev/null
 fi
 
-# Intentar añadir la llave solo si no está ya cargada
 if ! ssh-add -l > /dev/null 2>&1; then
-    ssh-add ~/.ssh/id_ed25519
+    ssh-add ~/.ssh/id_ed25519 2>/dev/null
 fi
 
+# --- ENTORNO LOCAL ---
 [[ -f "$HOME/.local/bin/env" ]] && . "$HOME/.local/bin/env"
+
+# --- FACULTAD ---
+alias cursada="cd ~/Desktop/cursada-2026/"

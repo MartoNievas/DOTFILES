@@ -19,7 +19,6 @@ require("lazy").setup({
         { "LazyVim/LazyVim", import = "lazyvim.plugins" },
         { import = "plugins.ui" },
         { import = "plugins.lang" },
-        { import = "plugins.editor" },
     },
     defaults = {
         lazy = false,
