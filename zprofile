@@ -5,6 +5,6 @@ export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_CACHE_HOME="$HOME/.cache"
 export EDITOR="nvim"
 export TERMINAL="st"
-
-# Arranca X si estamos en TTY1
-[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && exec startx
+export DEBUGINFOD_URLS="https://debuginfod.archlinux.org"
+export PATH="$HOME/.npm-global/bin:$PATH"
+export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"

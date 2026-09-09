@@ -95,10 +95,6 @@ alias colrofi="vim ~/.config/rofi/colors.rasi"
 # --- MANTENIMIENTO ---
 alias clean='echo "--- Limpiando caché de paquetes ---" && sudo paccache -rk 2 && echo "--- Eliminando huérfanos ---" && (sudo pacman -Rs $(pacman -Qdtq) || echo "No hay huérfanos") && echo "--- Limpiando logs ---" && sudo journalctl --vacuum-time=2weeks && echo "Sistema limpio!"'
 
-# --- EXPORTS ---
-export DEBUGINFOD_URLS="https://debuginfod.archlinux.org"
-export PATH="$HOME/.npm-global/bin:$PATH"
-
 # --- PROMPT (Tokyo Night) ---
 autoload -Uz vcs_info
 precmd() { vcs_info }
@@ -119,13 +115,6 @@ bindkey '^X^E' edit-command-line
 # --- PLUGINS (Arch Linux repo paths) ---
 [[ -f /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]] && source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 [[ -f /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]] && source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-# --- GESTION DE CLAVE SSH ---
-export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
-
-if [ ! -S "$SSH_AUTH_SOCK" ]; then
-    ssh-agent -a "$SSH_AUTH_SOCK" > /dev/null
-fi
 
 if ! ssh-add -l > /dev/null 2>&1; then
     ssh-add ~/.ssh/id_ed25519 2>/dev/null
