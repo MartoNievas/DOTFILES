@@ -15,6 +15,7 @@ log_warn() { echo -e "${YELLOW}[WARN]${NC}  $*"; }
 declare -A LINKS=(
   [zshrc]="$HOME/.zshrc"
   [zprofile]="$HOME/.zprofile"
+  [zshenv]="$HOME/.zshenv"
   [bashrc]="$HOME/.bashrc"
   [bash_profile]="$HOME/.bash_profile"
   [tmux.conf]="$HOME/.tmux.conf"

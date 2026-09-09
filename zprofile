@@ -1,10 +1,5 @@
 # ~/.zprofile
-export PATH="$HOME/.local/bin:$PATH"
-export XDG_CONFIG_HOME="$HOME/.config"
-export XDG_DATA_HOME="$HOME/.local/share"
-export XDG_CACHE_HOME="$HOME/.cache"
-export EDITOR="nvim"
-export TERMINAL="st"
-export DEBUGINFOD_URLS="https://debuginfod.archlinux.org"
-export PATH="$HOME/.npm-global/bin:$PATH"
-export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
+# Arrancar X11 o Wayland automáticamente al loguearse en tty1
+if [[ -z "$DISPLAY" ]] && [[ "$XDG_VTNR" -eq 1 ]]; then
+    exec startx
+fi
