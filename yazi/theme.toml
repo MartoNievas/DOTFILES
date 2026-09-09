@@ -10,7 +10,10 @@ ratio = [1, 2, 5]
 [preview]
 image_protocol = "chafa"
 
-[filetype]
-rules = [
-{ name = "*/", fg = "#fe8019" },
-]
+[[filetype.rules]]
+url = "*.rs"
+mime = "text/x-rust"
+# o si es para carpetas/archivos específicos:
+# url = "*/"
+
+
