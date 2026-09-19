@@ -8,7 +8,7 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-log_ok() { echo -e "${GREEN}[OK]${NC}    $*"; }
+log_ok() { echo -e "${GREEN}[OK]${NC}   $*"; }
 log_warn() { echo -e "${YELLOW}[WARN]${NC}  $*"; }
 
 # ─── Mapa de dotfiles (Origen = Destino) ──────────────────────────────────────
@@ -29,26 +29,28 @@ for file in "${!LINKS[@]}"; do
   src="$DOTFILES_DIR/$file"
   dst="${LINKS[$file]}"
 
-  # Si el archivo de origen no existe en ~/dotfiles, lo salta
+  # Quitar posible slash final para no romper tests de symlink
+  dst="${dst%/}"
+
   if [ ! -e "$src" ]; then
     log_warn "No se encontró el origen: $src"
     continue
   fi
 
-  # Asegurar que el directorio de destino exista (ej: ~/.config)
   mkdir -p "$(dirname "$dst")"
 
-  # Si ya es un symlink, lo borra para renovarlo
+  # Si ya es un symlink (roto o sano), se borra directamente
   if [ -L "$dst" ]; then
-    rm "$dst"
-  # Si es un archivo o carpeta real, backup preventivo
+    rm -f "$dst"
+  # Si es un directorio o archivo real preexistente, backup preventivo
   elif [ -e "$dst" ]; then
-    mv "$dst" "${dst}.bak"
-    log_warn "Se creó backup: ${dst}.bak"
+    timestamp=$(date +%Y%m%d%H%M%S)
+    mv "$dst" "${dst}.bak.${timestamp}"
+    log_warn "Se creó backup: ${dst}.bak.${timestamp}"
   fi
 
-  # Crear el enlace simbólico
-  ln -s "$src" "$dst"
+  # -s: simbólico, -f: fuerza, -n / -T: trata el destino como archivo normal si es symlink a directorio
+  ln -snf "$src" "$dst"
   log_ok "$file ➔ $dst"
 done
 

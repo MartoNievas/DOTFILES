@@ -1,0 +1,4 @@
+[mgr]
+prepend_keymap = [
+  { on = "R", run = 'shell "python3 \"$0\"" --block', desc = "Ejecutar Python" },
+]
