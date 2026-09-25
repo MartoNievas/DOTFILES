@@ -117,6 +117,16 @@ mget() {
   wget --header="Cookie: MoodleSession=$MOODLE_SESSION" --content-disposition "$@"
 }
 
+#copia el path completo al portapeles del sistema (Wayland)
+cpyclip() {
+  if [[ -z "$1" ]]; then
+    echo "Empty path" >&2
+    return 1
+  fi
+
+  realpath "$@" | wl-copy -n
+}
+
 # ==============================================================================
 # 7. ALIASES
 # ==============================================================================
