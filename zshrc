@@ -150,6 +150,8 @@ fi
 
 # Lanza Cuis-Smalltalk en segundo plano totalmente desacoplado de la terminal
 alias cuis="cd \"$_desktop_dir/cuis\" && nohup ./RunCuisUniversityOnLinux.sh >/dev/null 2>&1 & disown && exit"
+#Lanza BabyStep-Smalltalk en segundo plano totalmente desacoplado de la terminal
+alias baby="cd \"$_desktop_dir/babySteps\" && nohup ./run.sh >/dev/null 2>&1 & disown && exit"
 
 # Scripts y utilidades locales
 alias cad="$HOME/dev/suckless-btw/scripts/audio-device-selector-handler.sh"
